@@ -3,15 +3,18 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "app/(auth)/_layout.js",
+    "app/+not-found.js",
+    "app/_layout.js",
+    "screens/CreateAccount",
+    "screens/SupplierHome.tst",
+    "app/components/SignIn.jsx",
+    "context/AuthContext.js"
   ]
 }
