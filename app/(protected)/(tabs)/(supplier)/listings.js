@@ -1,3 +1,4 @@
+// app\(protected)\(tabs)\(supplier)\listings.js
 import React from "react";
 import { Text } from "react-native";
 import ListingManagementScreen from "../../../screens/supplier/Listing/ListingManagementScreen";

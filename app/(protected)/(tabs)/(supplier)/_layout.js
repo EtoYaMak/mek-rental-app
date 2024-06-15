@@ -1,3 +1,4 @@
+// app\(protected)\(tabs)\(supplier)\_layout.js
 import React from "react";
 import { Tabs } from "expo-router";
 import COLORS from "../../../../styles/COLORS";
@@ -38,6 +39,7 @@ const _layout = () => {
           ),
         }}
       />
+
       <Tabs.Screen
         name="settings"
         options={{

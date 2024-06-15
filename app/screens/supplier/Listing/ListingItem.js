@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Image,
-  Button,
   ScrollView,
   StyleSheet,
   Modal,
@@ -15,10 +14,8 @@ import ImageViewer from "react-native-image-zoom-viewer";
 import useSignedUrlCache from "../../../../hooks/useSignedUrlCache";
 import COLORS from "../../../../styles/COLORS";
 import ListingDetails from "./ListingDetails";
-import { useRouter } from "expo-router";
 
-const ListingItem = ({ item, deleteListing }) => {
-  const router = useRouter();
+const ListingItem = ({ item, deleteListing, onPress }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { signedUrls, isLoading: signedUrlsLoading } = useSignedUrlCache(
     item?.image_url || []
@@ -58,54 +55,58 @@ const ListingItem = ({ item, deleteListing }) => {
   const images = signedUrls.map((url) => ({ url }));
 
   return (
-    <View style={styles.container}>
-      <ListingDetails item={item} />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollView}
-      >
-        {signedUrls.map((url, index) => (
-          <Pressable key={index} onPress={() => handleImagePress(index)}>
-            <Image source={{ uri: url }} style={styles.image} />
-          </Pressable>
-        ))}
-      </ScrollView>
-      <Pressable
-        style={{
-          paddingHorizontal: 5,
-          paddingVertical: 10,
-          backgroundColor: COLORS.black,
-          width: "30%",
-          alignSelf: "flex-end",
-          alignItems: "center",
-          borderRadius: 5,
-        }}
-        onPress={() => deleteListing(item.id, item.image_url)}
-      >
-        <Text style={{ color: COLORS.white, fontSize: 19, fontWeight: "600" }}>
-          Delete
-        </Text>
-      </Pressable>
+    <Pressable onPress={onPress}>
+      <View style={styles.container}>
+        <ListingDetails item={item} />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.scrollView}
+        >
+          {signedUrls.map((url, index) => (
+            <Pressable key={index} onPress={() => handleImagePress(index)}>
+              <Image source={{ uri: url }} style={styles.image} />
+            </Pressable>
+          ))}
+        </ScrollView>
+        <Pressable
+          style={{
+            paddingHorizontal: 5,
+            paddingVertical: 10,
+            backgroundColor: COLORS.black,
+            width: "30%",
+            alignSelf: "flex-end",
+            alignItems: "center",
+            borderRadius: 5,
+          }}
+          onPress={() => deleteListing(item.id, item.image_url)}
+        >
+          <Text
+            style={{ color: COLORS.white, fontSize: 19, fontWeight: "600" }}
+          >
+            Delete
+          </Text>
+        </Pressable>
 
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        onRequestClose={closeModal}
-      >
-        <ImageViewer
-          imageUrls={images}
-          index={selectedImageIndex}
-          onSwipeDown={closeModal}
-          enableSwipeDown
-          renderHeader={() => (
-            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </Modal>
-    </View>
+        <Modal
+          visible={isModalVisible}
+          transparent={true}
+          onRequestClose={closeModal}
+        >
+          <ImageViewer
+            imageUrls={images}
+            index={selectedImageIndex}
+            onSwipeDown={closeModal}
+            enableSwipeDown
+            renderHeader={() => (
+              <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                <Text style={styles.closeButtonText}>X</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </Modal>
+      </View>
+    </Pressable>
   );
 };
 

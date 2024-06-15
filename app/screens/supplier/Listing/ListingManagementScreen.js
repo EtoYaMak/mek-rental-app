@@ -11,15 +11,17 @@ import ListingForm from "./ListingForm";
 import ListingItem from "./ListingItem";
 import { ListingsContext } from "../../../../context/ListingsContext";
 import { useAuth } from "../../../../context/AuthContext";
+import ListingFullPageModal from "./ListingFullPageModal";
 import COLORS from "../../../../styles/COLORS";
-import ListingFullPage from "./ListingFullPage";
 
 const ListingManagementScreen = () => {
   const { listings, addListing, deleteListing, fetchListings } =
     useContext(ListingsContext);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isFullModalVisible, setIsFullModalVisible] = useState(false);
   const { user, role } = useAuth();
   const [supplierId, setSupplierId] = useState(null);
+  const [selectedListing, setSelectedListing] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -37,20 +39,28 @@ const ListingManagementScreen = () => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  const toggleFullModal = () => {
+    setIsFullModalVisible(!isFullModalVisible);
+  };
 
   const handleAddListing = async (newListing) => {
-    await addListing(newListing);
+    const addedListing = await addListing(newListing);
+    if (addedListing) {
+      await fetchListings(user.id); // Refresh the listings after adding a new one
+    }
     toggleModal();
   };
 
-  useEffect(() => {
-    fetchListings();
-  }, []);
+  const handleItemPress = (item) => {
+    setSelectedListing(item);
+    setIsFullModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
       {role === "Supplier" && (
         <Pressable
+          title="Add Listing"
           onPress={toggleModal}
           style={[
             {
@@ -76,18 +86,23 @@ const ListingManagementScreen = () => {
         onSubmit={handleAddListing}
         supplierId={supplierId} // Pass supplierId to ListingForm
       />
-      {listings !== null && listings.length > 0 ? (
-        <FlatList
-          data={listings}
-          renderItem={({ item }) => (
-            <ListingItem item={item} deleteListing={deleteListing} />
-          )}
-          keyExtractor={(item) => item?.id.toString()}
+      <FlatList
+        data={listings}
+        renderItem={({ item }) => (
+          <ListingItem
+            item={item}
+            deleteListing={deleteListing}
+            onPress={() => handleItemPress(item)}
+          />
+        )}
+        keyExtractor={(item) => item?.id.toString()}
+      />
+      {selectedListing && (
+        <ListingFullPageModal
+          isVisible={!!selectedListing}
+          item={selectedListing}
+          onClose={() => setSelectedListing(null)}
         />
-      ) : (
-        <View>
-          <Text>No listings available.</Text>
-        </View>
       )}
     </View>
   );
@@ -97,7 +112,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: COLORS.primaryBackground,
   },
 });
 
