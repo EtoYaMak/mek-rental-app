@@ -1,82 +1,100 @@
-import React, { createContext, useState, useEffect } from "react";
+// context/ListingsContext.js
+import React, { createContext, useState, useEffect, useContext } from "react";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "./AuthContext"; // Assuming the path to your AuthProvider
+import { useAuth } from "./AuthContext";
 
 export const ListingsContext = createContext();
 
 export const ListingsProvider = ({ children }) => {
-  const [listings, setListings] = useState([]);
   const { user, role } = useAuth();
+  const [listings, setListings] = useState([]);
 
   const fetchListings = async (supplierId = null) => {
-    let query = supabase.from("listings").select("*");
-
-    if (supplierId) {
-      query = query.eq("supplier_id", supplierId);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Error fetching listings:", error);
-    } else {
+    try {
+      let query = supabase.from("listings").select("*");
+      if (supplierId) {
+        query = query.eq("supplier_id", supplierId);
+      }
+      const { data, error } = await query;
+      if (error) throw error;
       setListings(data);
+    } catch (error) {
+      console.error("Error fetching listings:", error);
     }
   };
-
+  const fetchListingById = async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error fetching listing:", error);
+      return null;
+    }
+  };
   const addListing = async (listing) => {
-    const { data, error } = await supabase
-      .from("listings")
-      .insert([listing])
-      .single(); // Ensure we get the single object
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from("listings")
+        .insert([listing])
+        .single();
+      if (error) throw error;
+      setListings((prevListings) => [...prevListings, data]);
+      return data;
+    } catch (error) {
       console.error("Error adding listing:", error);
       return null;
-    } else {
-      await fetchListings(listing.supplier_id); // Refresh listings after adding
-      return data; // Return the created listing
     }
   };
 
   const deleteListing = async (listingId, imagePaths) => {
-    const { data, error } = await supabase
-      .from("listings")
-      .delete()
-      .eq("id", listingId);
+    try {
+      const { error } = await supabase
+        .from("listings")
+        .delete()
+        .eq("id", listingId);
+      if (error) throw error;
 
-    if (error) {
+      const { error: deleteError } = await supabase.storage
+        .from("equipment-images")
+        .remove(imagePaths);
+      if (deleteError) throw deleteError;
+
+      setListings((prevListings) =>
+        prevListings.filter((listing) => listing.id !== listingId)
+      );
+      return true;
+    } catch (error) {
       console.error("Error deleting listing:", error);
       return false;
     }
-
-    const { error: deleteError } = await supabase.storage
-      .from("equipment-images")
-      .remove(imagePaths);
-
-    if (deleteError) {
-      console.error("Error deleting images:", deleteError);
-      return false;
-    }
-
-    setListings(listings.filter((listing) => listing.id !== listingId));
-    return true;
   };
 
   useEffect(() => {
     if (user) {
       if (role === "supplier") {
-        fetchListings(user.id); // Fetch listings specific to supplier
+        fetchListings(user.id);
       } else {
-        fetchListings(); // Fetch all listings for viewing
+        fetchListings();
       }
     } else {
-      fetchListings(); // Fetch all listings for viewing
+      fetchListings();
     }
   }, [user, role]);
 
   return (
     <ListingsContext.Provider
-      value={{ listings, fetchListings, addListing, deleteListing }}
+      value={{
+        listings,
+        fetchListings,
+        fetchListingById,
+        addListing,
+        deleteListing,
+      }}
     >
       {children}
     </ListingsContext.Provider>

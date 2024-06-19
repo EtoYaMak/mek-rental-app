@@ -1,9 +1,10 @@
-// app\(protected)\(tabs)\(supplier)\_layout.js
+// app/(protected)/(tabs)/(supplier)/_layout.js
 import React from "react";
 import { Tabs } from "expo-router";
 import COLORS from "../../../../styles/COLORS";
 import { AntDesign } from "@expo/vector-icons";
-const _layout = () => {
+
+const SupplierLayout = () => {
   return (
     <Tabs
       screenOptions={{
@@ -23,7 +24,6 @@ const _layout = () => {
         name="index"
         options={{
           title: "Home",
-          headerShown: false,
           tabBarIcon: ({ color }) => (
             <AntDesign size={28} name="home" color={color} />
           ),
@@ -33,18 +33,15 @@ const _layout = () => {
         name="listings"
         options={{
           title: "Listings",
-          headerShown: false,
           tabBarIcon: ({ color }) => (
             <AntDesign size={28} name="pluscircleo" color={color} />
           ),
         }}
       />
-
       <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
-          headerShown: false,
           tabBarIcon: ({ color }) => (
             <AntDesign size={28} name="setting" color={color} />
           ),
@@ -54,4 +51,4 @@ const _layout = () => {
   );
 };
 
-export default _layout;
+export default SupplierLayout;

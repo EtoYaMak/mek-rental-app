@@ -1,3 +1,4 @@
+// app\_layout.js
 import React from "react";
 import { Stack } from "expo-router";
 import { AuthProvider } from "../context/AuthContext";
@@ -5,7 +6,7 @@ import { AuthProvider } from "../context/AuthContext";
 const Layout = () => {
   return (
     <AuthProvider>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{ headerShown: false, statusBarStyle: "dark" }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/sign-in" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/sign-up" options={{ headerShown: false }} />

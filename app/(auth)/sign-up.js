@@ -82,7 +82,7 @@ const SignUp = () => {
         <Picker
           selectedValue={role}
           dropdownIconColor={COLORS.third}
-          selectionColor={COLORS.secondary}
+          selectioncolor={COLORS.secondary}
           style={[
             styles.h2,
             {

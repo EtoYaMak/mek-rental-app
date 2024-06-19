@@ -15,15 +15,15 @@ const Home = () => {
       <Text style={[styles.h1, { color: COLORS.third }]}>
         Welcome To MEKRENTAL
       </Text>
-      <Text style={[styles.h1, { color: COLORS.secondary }]}>
-        Welcome To MEKRENTAL
-      </Text>
+      <Text style={[styles.h1, { color: COLORS.secondary }]}>SUPPLIER</Text>
       <Text style={[styles.h1, { color: COLORS.third }]}>
         Welcome To MEKRENTAL
       </Text>
-      <Text style={[styles.h1, { color: COLORS.secondary }]}>
+      <Text style={[styles.h1, { color: COLORS.secondary }]}>SUPPLIER</Text>
+      <Text style={[styles.h1, { color: COLORS.third }]}>
         Welcome To MEKRENTAL
       </Text>
+      <Text style={[styles.h1, { color: COLORS.secondary }]}>SUPPLIER</Text>
       <Text style={[styles.h1, { color: COLORS.third }]}>
         Welcome To MEKRENTAL
       </Text>
